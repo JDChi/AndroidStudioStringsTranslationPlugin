@@ -1,5 +1,7 @@
 package util;
 
+import common.Constant;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,7 +13,18 @@ import java.net.URLEncoder;
 
 public class HttpUtil {
 
-    public static void doGet(String url){
+    public interface ICallbackListener{
+        void success(String result);
+        void fail(String result);
+    }
+
+    private ICallbackListener iCallbackListener;
+
+    public void setiCallbackListener(ICallbackListener iCallbackListener) {
+        this.iCallbackListener = iCallbackListener;
+    }
+
+    public void doGet(String url){
         try {
             URL url1 = new URL(url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
@@ -22,6 +35,8 @@ public class HttpUtil {
             httpURLConnection.setReadTimeout(5000);
 
             int status = httpURLConnection.getResponseCode();
+
+//            System.out.println(status);
             BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
             String inputLine;
             StringBuffer content = new StringBuffer();
@@ -30,7 +45,13 @@ public class HttpUtil {
             }
             in.close();
             httpURLConnection.disconnect();
-            System.out.println(content);
+            if(status == Constant.RESPONSE_OK){
+            iCallbackListener.success(content.toString());
+            }else {
+
+            }
+
+//            System.out.println(content);
 
 
 

@@ -76,4 +76,19 @@ public class ChooseLanguageDialog extends DialogWrapper{
         init();
     }
 
+    /**
+     * 获取在屏幕中间的位置
+     *
+     * @param jFrame
+     * @return
+     */
+//    private Point getCenterLoaction(JFrame jFrame) {
+//        Toolkit toolkit = Toolkit.getDefaultToolkit();
+//        Dimension dimension = toolkit.getScreenSize();
+//        int width = jFrame.getWidth();
+//        int height = jFrame.getHeight();
+//        Point point = new Point(dimension.width / 2 - width / 2, dimension.height / 2 - height / 2);
+//        return point;
+//    }
+
 }
