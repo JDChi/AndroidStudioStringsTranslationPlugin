@@ -6,4 +6,5 @@ public class Constant {
 
     public static final String ZH = "zh";
     public static final String EN = "en";
+    public static final int RESPONSE_OK = 200;
 }
