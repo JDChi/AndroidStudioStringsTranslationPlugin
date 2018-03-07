@@ -44,6 +44,11 @@ public class TranslateAction extends AnAction implements HttpUtil.ICallbackListe
     private ChooseLanguageDialog chooseLanguageDialog;
     private Project project;
 
+
+    /**
+     * 这个方法用于点击后的实现
+     * @param e
+     */
     @Override
     public void actionPerformed(AnActionEvent e) {
         // TODO: insert action logic here
@@ -61,14 +66,33 @@ public class TranslateAction extends AnAction implements HttpUtil.ICallbackListe
             }
         });
 
+        chooseLanguageDialog.show();
 
-        if (chooseFile.getName().equals("strings.xml")) {
-            chooseLanguageDialog.show();
-        } else {
-            Messages.showErrorDialog("该文件不是strings.xml，请重新选择", "错误信息");
-        }
     }
 
+    /**
+     * 这个方法先于点击
+     * @param e
+     */
+    @Override
+    public void update(AnActionEvent e) {
+        super.update(e);
+
+        adjustStringsXmlFile(e);
+
+    }
+
+    /**
+     * 判断是否为strings.xml文件
+     * @param e
+     */
+    private void adjustStringsXmlFile(AnActionEvent e) {
+        chooseFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+        if (!chooseFile.getName().equals("strings.xml")) {
+            e.getPresentation().setEnabled(false);
+            e.getPresentation().setVisible(false);
+        }
+    }
 
     private ArrayList<AndroidString> originStringList;
     private int page;
