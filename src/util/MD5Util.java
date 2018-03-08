@@ -1,14 +1,13 @@
 package util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.util.TextUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MD5Util {
 
-    public static String md5Lower32(String rawData){
+    public static String md5Lower32(String rawData) {
         if (!StringUtils.isBlank(rawData)) {
             try {
                 MessageDigest messageDigest = MessageDigest.getInstance("MD5");
@@ -23,7 +22,7 @@ public class MD5Util {
                 e.printStackTrace();
                 return null;
             }
-        }else {
+        } else {
             return null;
         }
     }
