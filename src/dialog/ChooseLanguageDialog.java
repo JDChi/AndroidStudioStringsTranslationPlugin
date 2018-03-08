@@ -6,29 +6,31 @@ import common.SupportLanguage;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 
-public class ChooseLanguageDialog extends DialogWrapper{
+public class ChooseLanguageDialog extends DialogWrapper {
 
     private JCheckBox checkBox;
     private JCheckBox checkBox1;
     private JFrame jFrame;
-private JCheckBox[] jCheckBoxes;
-    public interface IConfirmListener{
+    private JCheckBox[] jCheckBoxes;
+
+    public interface IConfirmListener {
         void confirm();
     }
+
     private IConfirmListener iConfirmListener;
 
     public void setiConfirmListener(IConfirmListener iConfirmListener) {
         this.iConfirmListener = iConfirmListener;
     }
 
-    public ChooseLanguageDialog(@Nullable Project project, String title , boolean canBeParent) {
+    public ChooseLanguageDialog(@Nullable Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
         __init(title);
     }
@@ -41,9 +43,9 @@ private JCheckBox[] jCheckBoxes;
         List<String> supportLanguageList = supportLanguage.getLanguageList();
         int cols = 2;
         int rows = 0;
-        if(supportLanguageList.size() % 2 == 0){
+        if (supportLanguageList.size() % 2 == 0) {
             rows = rows + supportLanguageList.size() / 2;
-        }else if(supportLanguageList.size() % 2 == 1){
+        } else if (supportLanguageList.size() % 2 == 1) {
             rows = rows + supportLanguageList.size() / 2 + 1;
         }
 
@@ -53,8 +55,6 @@ private JCheckBox[] jCheckBoxes;
             jCheckBoxes[i] = new JCheckBox(supportLanguageList.get(i));
             jGridPanel.add(jCheckBoxes[i]);
         }
-
-
 
 
         return jGridPanel;
@@ -73,10 +73,18 @@ private JCheckBox[] jCheckBoxes;
                 iConfirmListener.confirm();
             }
         });
-        cb_selectAll.addChangeListener(new ChangeListener() {
+        cb_selectAll.addItemListener(new ItemListener() {
             @Override
-            public void stateChanged(ChangeEvent e) {
-
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    for (int i = 0; i < jCheckBoxes.length; i++) {
+                        jCheckBoxes[i].setSelected(true);
+                    }
+                }else {
+                    for (int i = 0; i < jCheckBoxes.length; i++) {
+                        jCheckBoxes[i].setSelected(false);
+                    }
+                }
             }
         });
         jSelectAllPanel.add(cb_selectAll);
