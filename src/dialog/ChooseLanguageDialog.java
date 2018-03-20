@@ -2,6 +2,7 @@ package dialog;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.Messages;
 import common.SupportLanguage;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,17 +12,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseLanguageDialog extends DialogWrapper {
 
-    private JCheckBox checkBox;
-    private JCheckBox checkBox1;
-    private JFrame jFrame;
     private JCheckBox[] jCheckBoxes;
+    private List<String> selectedLanguageList;//已选择的语言列表
+    List<SupportLanguage.LanguageType> supportLanguageList;//支持的语言列表
 
     public interface IConfirmListener {
-        void confirm();
+        void confirm(List<String> selectedLanguageList);
     }
 
     private IConfirmListener iConfirmListener;
@@ -33,6 +34,7 @@ public class ChooseLanguageDialog extends DialogWrapper {
     public ChooseLanguageDialog(@Nullable Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
         __init(title);
+        selectedLanguageList = new ArrayList<>();
     }
 
     @Nullable
@@ -40,7 +42,7 @@ public class ChooseLanguageDialog extends DialogWrapper {
     protected JComponent createCenterPanel() {
 
         SupportLanguage supportLanguage = new SupportLanguage();
-        List<String> supportLanguageList = supportLanguage.getLanguageList();
+        supportLanguageList = supportLanguage.getLanguageList();
         int cols = 2;
         int rows = 0;
         if (supportLanguageList.size() % 2 == 0) {
@@ -52,7 +54,7 @@ public class ChooseLanguageDialog extends DialogWrapper {
         JPanel jGridPanel = new JPanel(new GridLayout(rows, cols));
         jCheckBoxes = new JCheckBox[supportLanguage.getLanguageList().size()];
         for (int i = 0; i < jCheckBoxes.length; i++) {
-            jCheckBoxes[i] = new JCheckBox(supportLanguageList.get(i));
+            jCheckBoxes[i] = new JCheckBox(supportLanguageList.get(i).getFullName());
             jGridPanel.add(jCheckBoxes[i]);
         }
 
@@ -70,7 +72,21 @@ public class ChooseLanguageDialog extends DialogWrapper {
         bt_confirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                iConfirmListener.confirm();
+
+                for (int i = 0; i < jCheckBoxes.length; i++) {
+                    if (jCheckBoxes[i].isSelected()) {
+                        selectedLanguageList.add(supportLanguageList.get(i).getShortName());
+                    }
+                }
+
+                if (selectedLanguageList.isEmpty()) {
+                    Messages.showInfoMessage("请至少选择一种语言" , "错误");
+                }else {
+                    iConfirmListener.confirm(selectedLanguageList);
+                }
+
+
+
             }
         });
         cb_selectAll.addItemListener(new ItemListener() {

@@ -8,6 +8,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import dialog.ChooseLanguageDialog;
 import task.BackgroundTask;
 
+import java.util.List;
+
 
 public class TranslateAction extends AnAction {
 
@@ -30,8 +32,8 @@ public class TranslateAction extends AnAction {
         chooseLanguageDialog = new ChooseLanguageDialog(project, "Translating strings.xml", false);
         chooseLanguageDialog.setiConfirmListener(new ChooseLanguageDialog.IConfirmListener() {
             @Override
-            public void confirm() {
-                operateStringXmlFile(chooseFile.getPath());
+            public void confirm(List<String> selectedLanguageList) {
+                operateStringXmlFile();
                 chooseLanguageDialog.close(-1);
             }
         });
@@ -43,10 +45,9 @@ public class TranslateAction extends AnAction {
     /**
      * 操作strings.xml文件
      *
-     * @param filePath
      */
-    private void operateStringXmlFile(String filePath) {
-        new BackgroundTask(project, "write to xml", chooseFile ).queue();
+    private void operateStringXmlFile() {
+        new BackgroundTask(project, "Writing to xml", chooseFile).queue();
     }
 
     /**
@@ -72,9 +73,4 @@ public class TranslateAction extends AnAction {
             e.getPresentation().setVisible(false);
         }
     }
-
-
-
-
-
 }

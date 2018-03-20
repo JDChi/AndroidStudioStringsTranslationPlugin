@@ -49,11 +49,15 @@ public class BackgroundTask extends Task.Backgroundable implements HttpUtil.ICal
 
         originStringList = getStringList(chooseFile.getPath());
         String url;
+
+
+        //获取要翻译的内容，并请求翻译
         for (int i = 0; i < originStringList.size(); i++) {
             url = appendUrl(originStringList.get(i).getValue());
             httpUtil.doGet(url);
         }
 
+        //将key写入新的列表
         for (int i = 0; i < originStringList.size(); i++) {
             translateResultList.get(i).setKey(originStringList.get(i).getKey());
         }
@@ -166,6 +170,7 @@ public class BackgroundTask extends Task.Backgroundable implements HttpUtil.ICal
         BaiduTranslateResult baiduTranslateResult = gson.fromJson(result, BaiduTranslateResult.class);
         String dst = baiduTranslateResult.getTrans_result().get(0).getDst();
 
+        //将结果写入新的列表
         translateResultList.add(new AndroidString("", dst));
     }
 
