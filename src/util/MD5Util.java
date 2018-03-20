@@ -1,6 +1,6 @@
 package util;
 
-import org.apache.commons.lang3.StringUtils;
+
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 public class MD5Util {
 
     public static String md5Lower32(String rawData) {
-        if (!StringUtils.isBlank(rawData)) {
+        if (!rawData.isEmpty() && rawData != null) {
             try {
                 MessageDigest messageDigest = MessageDigest.getInstance("MD5");
                 byte[] rawBytes = rawData.getBytes();
