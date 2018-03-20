@@ -18,11 +18,12 @@ import java.util.List;
 public class ChooseLanguageDialog extends DialogWrapper {
 
     private JCheckBox[] jCheckBoxes;
-    private List<String> selectedLanguageList;//已选择的语言列表
+    private List<SupportLanguage.LanguageType> selectedLanguageList;//已选择的语言列表
     List<SupportLanguage.LanguageType> supportLanguageList;//支持的语言列表
+    private boolean isDefaultChinese;
 
     public interface IConfirmListener {
-        void confirm(List<String> selectedLanguageList);
+        void confirm(List<SupportLanguage.LanguageType> selectedLanguageList, boolean isDefaultChinese);
     }
 
     private IConfirmListener iConfirmListener;
@@ -62,6 +63,27 @@ public class ChooseLanguageDialog extends DialogWrapper {
         return jGridPanel;
     }
 
+
+    @Nullable
+    @Override
+    protected JComponent createNorthPanel() {
+        JPanel jIsChinesePanel = new JPanel();
+        JCheckBox cb_chinese = new JCheckBox("strings.xml为中文内容?");
+        cb_chinese.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    isDefaultChinese = true;
+                } else {
+                    isDefaultChinese = false;
+                }
+            }
+        });
+
+        jIsChinesePanel.add(cb_chinese);
+        return jIsChinesePanel;
+    }
+
     @Nullable
     @Override
     protected JComponent createSouthPanel() {
@@ -75,16 +97,15 @@ public class ChooseLanguageDialog extends DialogWrapper {
 
                 for (int i = 0; i < jCheckBoxes.length; i++) {
                     if (jCheckBoxes[i].isSelected()) {
-                        selectedLanguageList.add(supportLanguageList.get(i).getShortName());
+                        selectedLanguageList.add(supportLanguageList.get(i));
                     }
                 }
 
                 if (selectedLanguageList.isEmpty()) {
-                    Messages.showInfoMessage("请至少选择一种语言" , "错误");
-                }else {
-                    iConfirmListener.confirm(selectedLanguageList);
+                    Messages.showInfoMessage("请至少选择一种语言", "错误");
+                } else {
+                    iConfirmListener.confirm(selectedLanguageList , isDefaultChinese);
                 }
-
 
 
             }
@@ -96,7 +117,7 @@ public class ChooseLanguageDialog extends DialogWrapper {
                     for (int i = 0; i < jCheckBoxes.length; i++) {
                         jCheckBoxes[i].setSelected(true);
                     }
-                }else {
+                } else {
                     for (int i = 0; i < jCheckBoxes.length; i++) {
                         jCheckBoxes[i].setSelected(false);
                     }

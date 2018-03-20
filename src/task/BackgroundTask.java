@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import common.BaiduApp;
 import common.Constant;
+import common.SupportLanguage;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,16 +32,20 @@ public class BackgroundTask extends Task.Backgroundable implements HttpUtil.ICal
 
     private VirtualFile chooseFile;
 
-    private ArrayList<AndroidString> originStringList;
+    private ArrayList<AndroidString> originStringList;//源列表
     private HttpUtil httpUtil;
-    private List<AndroidString> translateResultList ;
+    private List<AndroidString> translateResultList;//翻译结果的列表（key和value）
+    private List<SupportLanguage.LanguageType> selectedLanguageList;//已选择的语言列表（内容是缩写）
+    private boolean isDefaultChinese;
 
-    public BackgroundTask(@Nullable Project project, @Nls @NotNull String title, VirtualFile virtualFile) {
+    public BackgroundTask(@Nullable Project project, @Nls @NotNull String title, VirtualFile virtualFile, List<SupportLanguage.LanguageType> selectedLanguageList, boolean isDefaultChinese) {
         super(project, title);
         chooseFile = virtualFile;
         translateResultList = new ArrayList<>();
         httpUtil = new HttpUtil();
         httpUtil.setiCallbackListener(this);
+        this.selectedLanguageList = selectedLanguageList;
+        this.isDefaultChinese = isDefaultChinese;
 
     }
 
@@ -51,17 +56,21 @@ public class BackgroundTask extends Task.Backgroundable implements HttpUtil.ICal
         String url;
 
 
-        //获取要翻译的内容，并请求翻译
-        for (int i = 0; i < originStringList.size(); i++) {
-            url = appendUrl(originStringList.get(i).getValue());
-            httpUtil.doGet(url);
+        for (int i = 0; i < selectedLanguageList.size(); i++) {
+            //获取要翻译的内容，并请求翻译
+            for (int j = 0; j < originStringList.size(); j++) {
+                url = appendUrl(originStringList.get(j).getValue() , selectedLanguageList.get(i).getShortName());
+                httpUtil.doGet(url);
+            }
+
+            //将key写入新的列表
+            for (int k = 0; k < originStringList.size(); k++) {
+                translateResultList.get(k).setKey(originStringList.get(k).getKey());
+            }
+            writeIntoXml(translateResultList , selectedLanguageList.get(i).getDirectoryName());
+            translateResultList.clear();
         }
 
-        //将key写入新的列表
-        for (int i = 0; i < originStringList.size(); i++) {
-            translateResultList.get(i).setKey(originStringList.get(i).getKey());
-        }
-         writeIntoXml(translateResultList);
     }
 
     /**
@@ -104,9 +113,10 @@ public class BackgroundTask extends Task.Backgroundable implements HttpUtil.ICal
     /**
      * 拼接url地址
      *
+     * @param shortName 语言简写
      * @param translateString 要翻译的文本（如果是一次上传多个文本的话，中间要用 \n 分隔）
      */
-    private String appendUrl(String translateString) {
+    private String appendUrl(String translateString , String shortName) {
 
 
         String salt = String.valueOf(System.currentTimeMillis());
@@ -114,10 +124,17 @@ public class BackgroundTask extends Task.Backgroundable implements HttpUtil.ICal
         String rawData = BaiduApp.APP_ID + translateString + salt + BaiduApp.APP_SECRET;
         String sign = MD5Util.md5Lower32(rawData);
 
+        String from;
+        if (isDefaultChinese) {
+            from = Constant.ZH;
+        }else {
+            from = Constant.EN;
+        }
+
         String url = Constant.TRANSLATE_URL
                 + "?q=" + HttpUtil.encode(translateString)
-                + "&from=" + Constant.ZH
-                + "&to=" + Constant.EN
+                + "&from=" + from
+                + "&to=" + shortName
                 + "&appid=" + BaiduApp.APP_ID
                 + "&salt=" + salt
                 + "&sign=" + sign;
@@ -128,15 +145,17 @@ public class BackgroundTask extends Task.Backgroundable implements HttpUtil.ICal
     /**
      * 将结果写入到xml文件里
      * @param androidStringList
+     * @param directoryName
      */
-    private void writeIntoXml(List<AndroidString> androidStringList) {
-        String valuesDirectoryPath = chooseFile.getPath().substring(0 , chooseFile.getPath().indexOf("/values/")) + "/values-"+ Constant.ZH;
+    private void writeIntoXml(List<AndroidString> androidStringList, String directoryName) {
+        //目标文件夹
+        String valuesDirectoryPath = chooseFile.getPath().substring(0 , chooseFile.getPath().indexOf("/values/")) + "/values-"+ directoryName;
 //        System.out.println(path);
         File valuesDirectory = new File(valuesDirectoryPath);
         if (!valuesDirectory.exists()) {
             valuesDirectory.mkdirs();
         }
-
+        //目标文件
         File stringXml = new File(valuesDirectoryPath + "/strings.xml");
         if (!stringXml.exists()) {
             try {

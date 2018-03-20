@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import common.SupportLanguage;
 import dialog.ChooseLanguageDialog;
 import task.BackgroundTask;
 
@@ -32,8 +33,8 @@ public class TranslateAction extends AnAction {
         chooseLanguageDialog = new ChooseLanguageDialog(project, "Translating strings.xml", false);
         chooseLanguageDialog.setiConfirmListener(new ChooseLanguageDialog.IConfirmListener() {
             @Override
-            public void confirm(List<String> selectedLanguageList) {
-                operateStringXmlFile();
+            public void confirm(List<SupportLanguage.LanguageType> selectedLanguageList, boolean isDefaultChinese) {
+                operateStringXmlFile(selectedLanguageList , isDefaultChinese);
                 chooseLanguageDialog.close(-1);
             }
         });
@@ -45,9 +46,11 @@ public class TranslateAction extends AnAction {
     /**
      * 操作strings.xml文件
      *
+     * @param selectedLanguageList
+     * @param isDefaultChinese
      */
-    private void operateStringXmlFile() {
-        new BackgroundTask(project, "Writing to xml", chooseFile).queue();
+    private void operateStringXmlFile(List<SupportLanguage.LanguageType> selectedLanguageList, boolean isDefaultChinese) {
+        new BackgroundTask(project, "Writing to xml", chooseFile , selectedLanguageList , isDefaultChinese).queue();
     }
 
     /**
