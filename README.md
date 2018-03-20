@@ -8,6 +8,8 @@
 
 目前支持的语言有：简体中文，繁体中文（香港地区），繁体中文（台湾地区），英语（美国），日语，韩语。
 
+百度翻译提供的每月免费翻译字符数为两百万个，超过的话则需要付费，所以如果遇到无法翻译，或是翻译缺失的情况，可能就是超过了免费字符数。
+
 # 操作方法
 
 1. 在Android Studio里安装插件AndroidLocalizeLanguage.jar
@@ -16,7 +18,9 @@
 
 ![](https://github.com/JDNew/AndroidStudioStringsTranslationPlugin/blob/master/src/pictures/WX20180320-115939.png)
 
-3. 在弹出的窗口里选择要翻译成的语言（至少选一门）。*注：默认翻译的原文是英文，如果是strings.xml里是中文的话，记得勾选“strings.xml为中文内容?”选项。*
+3. 在弹出的窗口里选择要翻译成的语言（至少选一门）。
+
+*注：默认翻译的原文是英文，如果是strings.xml里是中文的话，记得勾选“strings.xml为中文内容?”选项。*
 
 ![](https://github.com/JDNew/AndroidStudioStringsTranslationPlugin/blob/master/src/pictures/WX20180320-115950.png)
 
