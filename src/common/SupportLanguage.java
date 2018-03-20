@@ -11,7 +11,7 @@ public class SupportLanguage {
         final String FULL_ZH = "简体中文(中国大陆)";
         final String FULL_ZH_HK = "繁體中文(香港地區)";
         final String FULL_ZH_TW = "繁體中文(台灣地區)";
-        final String FULL_EN = "English(USA)";
+        final String FULL_EN_US = "English(USA)";
         final String FULL_JP = "Japanese(日本語)";
         final String FULL_KOR = "Korean(한국어)";
 
@@ -21,12 +21,19 @@ public class SupportLanguage {
         final String JP = "jp";
         final String KOR = "kor";
 
-        languageList.add(new LanguageType(FULL_ZH , ZH));
-        languageList.add(new LanguageType(FULL_ZH_HK , CHT));
-        languageList.add(new LanguageType(FULL_ZH_TW , CHT));
-        languageList.add(new LanguageType(FULL_EN , EN));
-        languageList.add(new LanguageType(FULL_JP , JP));
-        languageList.add(new LanguageType(FULL_KOR , KOR));
+        final String DR_ZH = "zh-rCN";
+        final String DR_ZH_HK = "zh-rHK";
+        final String DR_ZH_TW = "zh-rTW";
+        final String DR_EN_US = "en-rUS";
+        final String DR_JP = "ja-rJP";
+        final String DR_KOR = "ko-rKR";
+
+        languageList.add(new LanguageType(FULL_ZH , ZH , DR_ZH));
+        languageList.add(new LanguageType(FULL_ZH_HK , CHT , DR_ZH_HK));
+        languageList.add(new LanguageType(FULL_ZH_TW , CHT , DR_ZH_TW));
+        languageList.add(new LanguageType(FULL_EN_US , EN , DR_EN_US));
+        languageList.add(new LanguageType(FULL_JP , JP , DR_JP));
+        languageList.add(new LanguageType(FULL_KOR , KOR , DR_KOR));
     }
 
     public List<LanguageType> getLanguageList() {
@@ -36,10 +43,12 @@ public class SupportLanguage {
     public class LanguageType{
         String fullName;
         String shortName;
+        String directoryName;
 
-        LanguageType(String fullName , String shortName){
+        LanguageType(String fullName , String shortName , String directoryName){
             this.fullName = fullName;
             this.shortName = shortName;
+            this.directoryName = directoryName;
         }
 
         public String getFullName() {
@@ -56,6 +65,14 @@ public class SupportLanguage {
 
         public void setShortName(String shortName) {
             this.shortName = shortName;
+        }
+
+        public String getDirectoryName() {
+            return directoryName;
+        }
+
+        public void setDirectoryName(String directoryName) {
+            this.directoryName = directoryName;
         }
     }
 }
